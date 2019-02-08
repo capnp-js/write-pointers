@@ -1,26 +1,18 @@
 /* @flow */
 
 //TODO: Test level incrementing on guts
-import test from "ava";
-
+import * as assert from "assert";
 import { int32 } from "@capnp-js/read-data";
+import { describe, it } from "mocha";
 
 import { singleHop, doubleHop } from "../../src/far";
 
-test("`singleHop`", t => {
-  t.plan(2);
-
-  const segment = {
-    id: 0,
-    raw: new Uint8Array(8),
-    end: 8,
-  };
-
+describe("singleHop", function () {
+  const segment = { id: 0, raw: new Uint8Array(8), end: 8 };
   const ref = {
     segment,
     position: 0,
   };
-
   const land = {
     segment: {
       id: 21,
@@ -30,21 +22,16 @@ test("`singleHop`", t => {
     position: 120,
   };
 
-  singleHop(ref, land);
+  it("writes a single hop far-pointer", function () {
+    singleHop(ref, land);
 
-  t.is(int32(ref.segment.raw, 0), 120 | 0x02);
-  t.is(int32(ref.segment.raw, 4), 21);
+    assert.equal(int32(ref.segment.raw, 0), 120 | 0x02);
+    assert.equal(int32(ref.segment.raw, 4), 21);
+  });
 });
 
-test("`doubleHop`", t => {
-  t.plan(2);
-
-  const segment = {
-    id: 0,
-    raw: new Uint8Array(8),
-    end: 8,
-  };
-
+describe("doubleHop", function () {
+  const segment = { id: 0, raw: new Uint8Array(8), end: 8 };
   const ref = {
     segment,
     position: 0,
@@ -59,8 +46,10 @@ test("`doubleHop`", t => {
     position: 120,
   };
 
-  doubleHop(ref, land);
+  it("writes a double hop far-pointer", function () {
+    doubleHop(ref, land);
 
-  t.is(int32(ref.segment.raw, 0), 120 | 0x06);
-  t.is(int32(ref.segment.raw, 4), 21);
+    assert.equal(int32(ref.segment.raw, 0), 120 | 0x06);
+    assert.equal(int32(ref.segment.raw, 4), 21);
+  });
 });
